@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using WalterApi.Core.Entities.User;
+using WalterApi.Core.Interfaces;
 using WalterApi.Infrastucture.Context;
+using WalterApi.Infrastucture.Repository;
 
 namespace WalterApi.Infrastucture
 {
@@ -34,6 +36,11 @@ namespace WalterApi.Infrastucture
             })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
+        }
+
+        public static void AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
     }
 }

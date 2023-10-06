@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WalterApi.Core.Entities;
 using WalterApi.Core.Entities.Category;
 using WalterApi.Core.Entities.User;
 using WalterApi.Infrastucture.Initializers;
@@ -25,5 +26,6 @@ namespace WalterApi.Infrastucture.Context
 
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<RefreshToken> RefreshToken { get; set; }
     }
 }

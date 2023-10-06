@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WalterApi.Core.AutoMapper.User;
+using WalterApi.Core.Interfaces;
 using WalterApi.Core.Services;
 
 namespace WalterApi.Core
@@ -14,6 +15,7 @@ namespace WalterApi.Core
         public static void AddCoreServices(this IServiceCollection services)
         {
             services.AddTransient<UserService>();
+            services.AddTransient< JwtService>();
         }
 
         public static void AddMapping(this IServiceCollection services)
