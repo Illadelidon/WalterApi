@@ -32,7 +32,7 @@ namespace WalterApi.Api.Controllers
             var result = await _userService.GetAllAsync();
             return Ok(result);
         }
-        /*[HttpPost]
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateUserDto model)
         {
@@ -45,15 +45,15 @@ namespace WalterApi.Api.Controllers
                 {
                     return RedirectToAction(nameof(Index));
                 }
-                
+
                 return Ok(model);
             }
-          
+
             return Ok(model);
         }
 
 
-        [HttpGet]
+       /* [HttpGet]
         public async Task<IActionResult> Delete(string Id)
         {
             var user = await _userService.GetByIdAsync(Id);
