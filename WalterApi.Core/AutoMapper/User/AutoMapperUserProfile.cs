@@ -15,8 +15,8 @@ namespace WalterApi.Core.AutoMapper.User
         {
             CreateMap<UsersDto, AppUser>().ReverseMap();
             //CreateMap<EditUserDto, AppUser>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
-            //CreateMap<CreateUserDto, AppUser>().ForMember(dst => dst.UserName, act => act.MapFrom(src => src.Email));
-            //CreateMap<AppUser, CreateUserDto>();
+            CreateMap<CreateUserDto, AppUser>().ForMember(dst => dst.UserName, act => act.MapFrom(src => src.Email));
+            CreateMap<AppUser, CreateUserDto>();
         }
     }
 }

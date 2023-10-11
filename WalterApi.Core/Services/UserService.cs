@@ -57,45 +57,40 @@ namespace WalterApi.Core.Services
 
         public async Task<ServiceResponse> CreateAsync(CreateUserDto model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user != null)
+            if (model.Password != model.ConfirmPassword)
             {
                 return new ServiceResponse
                 {
-                    Message = "User exists.",
-                    Success = false,
+                    Message = "Confirm pssword do not match",
+                    Success = false
                 };
             }
 
-            var mappedUser = _mapper.Map<CreateUserDto, AppUser>(model);
-            IdentityResult result = await _userManager.CreateAsync(mappedUser, model.Password);
+            var newUser = _mapper.Map<CreateUserDto, AppUser>(model);
+            var result = await _userManager.CreateAsync(newUser, model.Password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(mappedUser, model.Role);
+                await _userManager.AddToRoleAsync(newUser, model.Role);
 
-                //await SendConfirmationEmail(mappedUser);
+                //await SendConfirmationEmailAsync(newUser);
+
+                var tokens = await _jwtService.GenerateJwtTokensAsync(newUser);
 
                 return new ServiceResponse
                 {
                     Message = "User successfully created.",
-                    Success = true,
+                    Success = true
                 };
             }
-
-            List<IdentityError> errorList = result.Errors.ToList();
-
-            string errors = "";
-            foreach (var error in errorList)
+            else
             {
-                errors = errors + error.Description.ToString();
+                return new ServiceResponse
+                {
+                    Message = "Error user not created.",
+                    Success = false,
+                    Errors = result.Errors.Select(e => e.Description)
+                };
             }
-
-            return new ServiceResponse
-            {
-                Message = "User creating error.",
-                Success = false,
-                Payload = errors
-            };
 
         }
 

@@ -32,25 +32,25 @@ namespace WalterApi.Api.Controllers
             var result = await _userService.GetAllAsync();
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpPost("Create")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateUserDto model)
+        public async Task<IActionResult> Create([FromBody] CreateUserDto model)
         {
             var validator = new CreateUserValidation();
             var validationResult = await validator.ValidateAsync(model);
             if (validationResult.IsValid)
             {
                 var result = await _userService.CreateAsync(model);
-                if (result.Success)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
 
-                return Ok(model);
+
+                return Ok(result);
             }
 
-            return Ok(model);
-        }
+            else
+            {
+                return BadRequest(validationResult.Errors);
+            }
+    }
 
 
        /* [HttpGet]
