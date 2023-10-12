@@ -66,5 +66,20 @@ namespace WalterApi.Api.Controllers
            var result = await _userService.LoginUserAsync(model);
             return Ok(result);
         }
+
+        [AllowAnonymous]
+        [HttpPost("DeleteUser")]
+        public async Task<IActionResult> DeleteUserAsync([FromBody] string id)
+        {
+            var result = await _userService.DeleteUserAsync(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
     }
 }

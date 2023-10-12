@@ -222,5 +222,34 @@ namespace WalterApi.Core.Services
              var roles = await _roleManager.Roles.ToListAsync();
              return roles;
          }*/
+
+        public async Task<ServiceResponse> DeleteUserAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Message = "User not found.",
+                    Success = false
+                };
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return new ServiceResponse
+                {
+                    Message = "User successfully deleted.",
+                    Success = true
+                };
+            }
+
+            return new ServiceResponse
+            {
+                Message = "User NOT deleted.",
+                Success = false
+            };
+        }
     }
 }
