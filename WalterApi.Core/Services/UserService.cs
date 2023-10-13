@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -250,6 +251,72 @@ namespace WalterApi.Core.Services
                 Message = "User NOT deleted.",
                 Success = false
             };
+        }
+
+        public async Task<ServiceResponse> UpdateUserAsync([FromBody] UpdateUserDto model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user == null)
+            {
+                return new ServiceResponse
+                {
+                    Message = "User not found.",
+                    Success = false
+                };
+            }
+            else
+            {
+                if (user.Email != model.Email)
+                {
+                    var res = await _userManager.FindByIdAsync(model.Id);
+                    res.EmailConfirmed = false;
+                    var confirmationResut = await _userManager.UpdateAsync(res);
+
+                }
+
+                var currentRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+
+                await _userManager.RemoveFromRoleAsync(user, currentRole);
+
+                var updatedUser = _mapper.Map<AppUser>(user);
+                updatedUser.Email = model.Email;
+                updatedUser.FirstName = model.FirstName;
+                updatedUser.LastName = model.LastName;
+                updatedUser.UserName = model.Email;
+
+                await _userManager.AddToRoleAsync(updatedUser, model.Role);
+
+                var result = await _userManager.UpdateAsync(updatedUser);
+                if (result.Succeeded)
+                {
+
+                    if (updatedUser.EmailConfirmed)
+                    {
+                        return new ServiceResponse
+                        {
+                            Message = "User successfully updated.",
+                            Success = true
+                        };
+                    }
+                    else
+                    {
+                        //await SendConfirmationEmailAsync(updatedUser);
+                        return new ServiceResponse
+                        {
+                            Message = "Confirm email please.",
+                            Success = true
+                        };
+                    }
+                }
+
+                return new ServiceResponse
+                {
+                    Message = "Email possibly used. Try another email.",
+                    Success = false,
+                    Errors = result.Errors.Select(e => e.Description),
+                };
+
+            }
         }
     }
 }

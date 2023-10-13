@@ -53,12 +53,7 @@ namespace WalterApi.Api.Controllers
     }
 
 
-       /* [HttpGet]
-        public async Task<IActionResult> Delete(string Id)
-        {
-            var user = await _userService.GetByIdAsync(Id);
-            return Ok(user.Payload);
-        }*/
+       
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserDto model)
@@ -79,6 +74,23 @@ namespace WalterApi.Api.Controllers
             else
             {
                 return BadRequest(result);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("UpdateUser")]
+        public async Task<IActionResult> UpdateUserAsync([FromBody] UpdateUserDto model)
+        {
+            var validator = new UpdateUserValidation();
+            var validationResult = await validator.ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+            var result = await _userService.UpdateUserAsync(model);
+            return Ok(result);
+            }
+            else
+            {
+                return BadRequest(validationResult.Errors);
             }
         }
     }
